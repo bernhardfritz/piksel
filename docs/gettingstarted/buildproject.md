@@ -20,17 +20,17 @@ cmake ..
 
 Make is a tool that will build your app based on the instructions provided by the so called Makefile. It is as simple as entering a single command:
 
-```
+```bash
 make
 ```
 
 The first time you execute make it will take some time until it's finished. Consequent builds will be much faster!
 
-From now on, everytime you modify your sourcecode, you merely need to call `emmake make` to rebuild your app.
+From now on, everytime you modify your sourcecode, you merely need to call `make` to rebuild your app.
 
 #### Launch your app
 
-```
+```bash
 ./index
 ```
 
@@ -50,7 +50,7 @@ emcmake cmake ..
 
 #### Compile using emmake
 
-```
+```bash
 emmake make
 ```
 
@@ -60,7 +60,7 @@ From now on, everytime you modify your sourcecode, you merely need to call `emma
 
 #### Launch your app with emrun
 
-```
+```bash
 emrun --no_browser --port 8080 .
 ```
 

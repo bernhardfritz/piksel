@@ -3,11 +3,11 @@
     * [How to build your project](gettingstarted/buildproject.md)
 
 * Reference
-    <!-- * [piksel::BaseApp](reference/baseapp.md)
+    * [piksel::BaseApp](reference/baseapp.md)
     * [piksel::Font](reference/font.md)
-    * [piksel::Graphics](reference/graphics.md)
-    * [piksel::Image](reference/image.md) -->
-    * :construction: under construction :construction:
+    * [piksel::Graphics :construction:](reference/graphics.md)
+    * [piksel::Image](reference/image.md)
+    * [piksel::Rng :construction:](reference/rng.md)
 
 * Examples
     <!-- * [A* search algorithm](examples/astar.md)

@@ -19,7 +19,7 @@ public:
         , sboSize(1024 * sizeof(State))
         , postfx_texture(0) {
     }
-    BaseApp(int width, int height) : BaseApp(width, height, "Piksel") {
+    BaseApp(int width, int height) : BaseApp(width, height, "piksel") {
     }
     BaseApp() : BaseApp(100, 100) {
     }
