@@ -27,7 +27,7 @@ struct ShaderRelevantState {
 
 struct ShaderIrrelevantState {
     bool fill, stroke, tint;
-    int rectMode, ellipseMode, imageMode;
+    DrawMode rectMode, ellipseMode, imageMode;
     Font* textFont;
     float textSize;
 
@@ -35,9 +35,9 @@ struct ShaderIrrelevantState {
         : fill(true)
         , stroke(true)
         , tint(false)
-        , rectMode(CORNER)
-        , ellipseMode(CENTER)
-        , imageMode(CORNER)
+        , rectMode(DrawMode::CORNER)
+        , ellipseMode(DrawMode::CENTER)
+        , imageMode(DrawMode::CORNER)
         , textFont(nullptr)
         , textSize(12.0f) {
     }

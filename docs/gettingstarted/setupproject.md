@@ -30,7 +30,7 @@ Now we can start writing code. Create and populate the following files inside of
 
 **app.hpp**
 
-In the code below we create a new class `App` that extends [piksel::BaseApp](reference/baseapp.md). Among others, [piksel::BaseApp](reference/baseapp.md) offers virtual functions `setup` and `draw` which we declare here and implement in `app.cpp`. The constructor of [piksel::BaseApp](reference/baseapp.md) allows us to set the canvas size to 640x480 pixels.
+In the code below we create a new class `App` that extends [piksel::BaseApp](reference/baseapp.md). Among others, [piksel::BaseApp](reference/baseapp.md) offers virtual functions [setup](reference/baseapp.md#setup) and [draw](reference/baseapp.md#draw) which we declare here and implement in `app.cpp`. The constructor of [piksel::BaseApp](reference/baseapp.md) allows us to set the canvas size to 640x480 pixels.
 
 ```cpp
 #ifndef APP_HPP
@@ -49,7 +49,7 @@ public:
 
 **app.cpp**
 
-This is where we implement `setup` and `draw`. `setup` will only be called once when the app starts, `draw` will be called in a loop once per frame, immediately after setup. The parameter `g` of the `draw` function is a reference to an object of type [piksel::Graphics](reference/graphics.md) which is used to define what should be rendered. Here we simply clear the canvas with a gray background color and render a rectangle on top.
+This is where we implement [setup](reference/baseapp.md#setup) and [draw](reference/baseapp.md#draw). [setup](reference/baseapp.md#setup) will only be called once when the app starts, [draw](reference/baseapp.md#draw) will be called in a loop once per frame, immediately after setup. The parameter `g` of the [draw](reference/baseapp.md#draw) function is a reference to an object of type [piksel::Graphics](reference/graphics.md) which is used to define what should be rendered. Here we simply clear the canvas with a gray background color and render a rectangle on top.
 
 ```cpp
 #include "app.hpp"

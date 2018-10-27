@@ -1,6 +1,7 @@
 #ifndef GRAPHICS_HPP
 #define GRAPHICS_HPP
 
+#include "drawmode.hpp"
 #include "font.hpp"
 #include "image.hpp"
 #include "shape.hpp"
@@ -27,10 +28,11 @@ public:
     void applyMatrix(float a, float b, float c, float d, float e, float f);
     void background(glm::vec4 color);
     void ellipse(float x, float y, float w, float h);
-    void ellipseMode(int ellipseMode);
+    void ellipseMode(DrawMode ellipseMode);
     void fill(glm::vec4 color);
+    void image(Image& img, float dx, float dy, float dWidth, float dHeight, float sx, float sy, float sWidth, float sHeight);
     void image(Image& img, float x, float y, float w, float h);
-    void imageMode(int imageMode);
+    void imageMode(DrawMode imageMode);
     void line(float x1, float y1, float x2, float y2);
     void noFill();
     void noStroke();
@@ -39,13 +41,12 @@ public:
     void pop();
     void push();
     void rect(float x, float y, float w, float h);
-    void rectMode(int rectMode);
+    void rectMode(DrawMode rectMode);
     void resetMatrix();
     void rotate(float rad);
     void scale(float x, float y);
     void stroke(glm::vec4 color);
     void strokeWeight(float weight);
-    void subImage(Image& img, float dx, float dy, float dWidth, float dHeight, float sx, float sy, float sWidth, float sHeight);
     void text(std::string str, float x, float y);
     void textFont(Font& font);
     void textSize(float size);
@@ -59,7 +60,7 @@ private:
     std::vector<ShaderRelevantState>& shaderRelevantStateVector;
     std::vector<Shape>& shapes;
 
-    void drawShape(const Shape& shape, int drawMode, float a, float b, float c, float d);
+    void drawShape(const Shape& shape, DrawMode drawMode, float a, float b, float c, float d);
     State& peek();
     void _rect(float a, float b, float c, float d);
 };

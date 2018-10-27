@@ -22,7 +22,7 @@ void Graphics::background(glm::vec4 color) {
     push();
     fill(color);
     noStroke();
-    rectMode(CORNER);
+    rectMode(DrawMode::CORNER);
     rect(0.0f, 0.0f, framebufferWidth, framebufferHeight);
     pop();
 }
@@ -32,9 +32,9 @@ void Graphics::ellipse(float a, float b, float c, float d) {
     drawShape(shapes[1], state.shaderIrrelevantState.ellipseMode, a, b, c, d);
 }
 
-void Graphics::ellipseMode(int ellipseMode) {
+void Graphics::ellipseMode(DrawMode ellipseMode) {
     State& state = peek();
-    state.shaderIrrelevantState.ellipseMode = ellipseMode % 4;
+    state.shaderIrrelevantState.ellipseMode = ellipseMode;
 }
 
 void Graphics::fill(glm::vec4 color) {
@@ -43,13 +43,30 @@ void Graphics::fill(glm::vec4 color) {
     state.shaderIrrelevantState.fill = true;
 }
 
-void Graphics::image(Image& img, float x, float y, float w, float h) {
-    subImage(img, x, y, w, h, 0.0f, 0.0f, img.width, img.height);
+void Graphics::image(Image& img, float dx, float dy, float dWidth, float dHeight, float sx, float sy, float sWidth, float sHeight) {
+    push();
+    State& state = peek();
+    if (!state.shaderIrrelevantState.tint) {
+        state.shaderRelevantState.tintColor = glm::vec4(1.0f);
+    }
+    state.shaderIrrelevantState.rectMode = state.shaderIrrelevantState.imageMode;
+    glActiveTexture(GL_TEXTURE0 + (img._index % 8));
+	glBindTexture(GL_TEXTURE_2D, img._texture);
+	state.shaderRelevantState.textureMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(sx / img.width, (img.height - sy - sHeight) / img.height, 0.0f));
+	state.shaderRelevantState.textureMatrix = glm::scale(state.shaderRelevantState.textureMatrix, glm::vec3(sWidth / img.width, sHeight / img.height, 1.0f));
+    // state.shaderRelevantState.textureMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0f)); // for debug
+    state.shaderRelevantState.textureIndex = img._index % 8;
+    _rect(dx, dy, dWidth, dHeight);
+    pop();
 }
 
-void Graphics::imageMode(int imageMode) {
+void Graphics::image(Image& img, float x, float y, float w, float h) {
+    image(img, x, y, w, h, 0.0f, 0.0f, img.width, img.height);
+}
+
+void Graphics::imageMode(DrawMode imageMode) {
     State& state = peek();
-    state.shaderIrrelevantState.imageMode = imageMode % 4;
+    state.shaderIrrelevantState.imageMode = imageMode;
 }
 
 void Graphics::line(float x1, float y1, float x2, float y2) {
@@ -65,10 +82,10 @@ void Graphics::line(float x1, float y1, float x2, float y2) {
 	float angle = atan2f(r.y, r.x);
 	translate(x1 + sinf(angle) * state.shaderRelevantState.strokeWeight / 2.0f, y1 - cosf(angle) * state.shaderRelevantState.strokeWeight / 2.0f);
 	rotate(angle);
-    rectMode(CORNER);
+    rectMode(DrawMode::CORNER);
 	rect(0.0f, 0.0f, glm::length(r), state.shaderRelevantState.strokeWeight);
     // state.shaderRelevantState.textureIndex = 0;
-    // ellipseMode(CENTER);
+    // ellipseMode(DrawMode::CENTER);
     // ellipse(0.0f, state.shaderRelevantState.strokeWeight / 2.0f, state.shaderRelevantState.strokeWeight, state.shaderRelevantState.strokeWeight);
     // ellipse(glm::length(r), state.shaderRelevantState.strokeWeight / 2.0f, state.shaderRelevantState.strokeWeight, state.shaderRelevantState.strokeWeight);
 	pop();
@@ -96,10 +113,10 @@ void Graphics::point(float x, float y) {
     state.shaderIrrelevantState.fill = state.shaderIrrelevantState.stroke;
     state.shaderIrrelevantState.stroke = false;
     if (state.shaderRelevantState.strokeWeight <= 1.0f) {
-        rectMode(CENTER);
+        rectMode(DrawMode::CENTER);
         rect(x, y, state.shaderRelevantState.strokeWeight, state.shaderRelevantState.strokeWeight);
     } else {
-        ellipseMode(CENTER);
+        ellipseMode(DrawMode::CENTER);
         ellipse(x, y, state.shaderRelevantState.strokeWeight, state.shaderRelevantState.strokeWeight);
     }
 	pop();
@@ -121,9 +138,9 @@ void Graphics::rect(float a, float b, float c, float d) {
     drawShape(shapes[0], state.shaderIrrelevantState.rectMode, a, b, c, d);
 }
 
-void Graphics::rectMode(int rectMode) {
+void Graphics::rectMode(DrawMode rectMode) {
     State& state = peek();
-    state.shaderIrrelevantState.rectMode = rectMode % 4;
+    state.shaderIrrelevantState.rectMode = rectMode;
 }
 
 void Graphics::resetMatrix() {
@@ -150,23 +167,6 @@ void Graphics::stroke(glm::vec4 color) {
 void Graphics::strokeWeight(float weight) {
     State& state = peek();
     state.shaderRelevantState.strokeWeight = weight;
-}
-
-void Graphics::subImage(Image& img, float dx, float dy, float dWidth, float dHeight, float sx, float sy, float sWidth, float sHeight) {
-    push();
-    State& state = peek();
-    if (!state.shaderIrrelevantState.tint) {
-        state.shaderRelevantState.tintColor = glm::vec4(1.0f);
-    }
-    state.shaderIrrelevantState.rectMode = state.shaderIrrelevantState.imageMode;
-    glActiveTexture(GL_TEXTURE0 + (img._index % 8));
-	glBindTexture(GL_TEXTURE_2D, img._texture);
-	state.shaderRelevantState.textureMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(sx / img.width, (img.height - sy - sHeight) / img.height, 0.0f));
-	state.shaderRelevantState.textureMatrix = glm::scale(state.shaderRelevantState.textureMatrix, glm::vec3(sWidth / img.width, sHeight / img.height, 1.0f));
-    // state.shaderRelevantState.textureMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0f)); // for debug
-    state.shaderRelevantState.textureIndex = img._index % 8;
-    _rect(dx, dy, dWidth, dHeight);
-    pop();
 }
 
 void Graphics::text(std::string str, float x, float y) {
@@ -211,7 +211,7 @@ void Graphics::text(std::string str, float x, float y) {
             float b = cursor.y - yoff * textScale * SHAPE_HEIGHT;
             float c = a + baseScale * textScale * SHAPE_WIDTH;
             float d = b - baseScale * textScale * SHAPE_HEIGHT;
-            drawShape(font->letters[ch - ' '].shape, CORNERS, a, b, c, d);
+            drawShape(font->letters[ch - ' '].shape, DrawMode::CORNERS, a, b, c, d);
             float advanceWidth = letter.advanceWidth * inverseFontHeight;
             cursor.x += textScale * SHAPE_WIDTH * advanceWidth;
         }
@@ -281,7 +281,7 @@ State& Graphics::peek() {
     return stateStack.top();
 }
 
-void Graphics::drawShape(const Shape& shape, int drawMode, float a, float b, float c, float d) {
+void Graphics::drawShape(const Shape& shape, DrawMode drawMode, float a, float b, float c, float d) {
     push();
     State& state = peek();
     if (state.shaderIrrelevantState.fill || state.shaderIrrelevantState.stroke) {
@@ -295,12 +295,12 @@ void Graphics::drawShape(const Shape& shape, int drawMode, float a, float b, flo
             state.shaderRelevantState.fillColor.a = 0.0f;
         }
         float sx = shape.xoff, sy = shape.yoff;
-        /*if (drawMode == CENTER) {
+        /*if (drawMode == DrawMode::CENTER) {
             // do nothing
-        } else */if (drawMode == CORNER) {
+        } else */if (drawMode == DrawMode::CORNER) {
             a += c / 2.0f;
             b += d / 2.0f;
-        } else if (drawMode == CORNERS) {
+        } else if (drawMode == DrawMode::CORNERS) {
             if (a > c) {
                 std::swap(a, c);
             }
@@ -313,13 +313,13 @@ void Graphics::drawShape(const Shape& shape, int drawMode, float a, float b, flo
             b += h / 2.0f;
             c = w;
             d = h;
-        } else if (drawMode == RADIUS) {
+        } else if (drawMode == DrawMode::RADIUS) {
             c *= 2.0f;
             d *= 2.0f;
         }
         state.shaderRelevantState.strokeWeight = glm::clamp(state.shaderRelevantState.strokeWeight * (2.0f / std::max(c, d)), 0.0f, 0.75f); // magic
-        imageMode(CENTER);
-        subImage(msdf, a, b, c * 2.0f, d * 2.0f, sx, sy, SHAPE_WIDTH, SHAPE_HEIGHT); // assuming SHAPE_PXRANGE is SHAPE_WIDTH / 4
+        imageMode(DrawMode::CENTER);
+        image(msdf, a, b, c * 2.0f, d * 2.0f, sx, sy, SHAPE_WIDTH, SHAPE_HEIGHT); // assuming SHAPE_PXRANGE is SHAPE_WIDTH / 4
     }
     pop();
 }
@@ -328,15 +328,15 @@ void Graphics::_rect(float a, float b, float c, float d) {
     push();
     State& state = peek();
     switch(state.shaderIrrelevantState.rectMode) {
-        case CENTER:
+        case DrawMode::CENTER:
             translate(a - c / 2, b - d / 2);
             scale(c, d);
             break;
-        case CORNER:
+        case DrawMode::CORNER:
             translate(a, b);
             scale(c, d);
             break;
-        case CORNERS:
+        case DrawMode::CORNERS:
             if (a > c) {
                 std::swap(a, c);
             }
@@ -346,7 +346,7 @@ void Graphics::_rect(float a, float b, float c, float d) {
             translate(a, b);
             scale(c - a, d - b);
             break;
-        case RADIUS:
+        case DrawMode::RADIUS:
             translate(a - c, b - d);
             scale(c * 2, d * 2);
             break; 
