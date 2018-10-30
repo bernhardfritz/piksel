@@ -17,7 +17,8 @@ public:
         , height(height)
         , title(title)
         , sboSize(1024 * sizeof(State))
-        , postfx_texture(0) {
+        , postfx_texture(0)
+        , devicePixelRatio(1.0f) {
     }
     BaseApp(int width, int height) : BaseApp(width, height, "piksel") {
     }
@@ -52,6 +53,7 @@ private:
     std::stack<State> stateStack;
     std::vector<ShaderRelevantState> shaderRelevantStateVector;
     std::vector<Shape> shapes;
+    float devicePixelRatio;
 
     void mainLoop(Graphics& g);
     void updateFramebufferSize(int framebufferWidth, int framebufferHeight);
@@ -60,6 +62,7 @@ private:
     void cursorPosCallback(double xpos, double ypos);
     void mouseButtonCallback(int button, int action, int mods);
     void scrollCallback(double xoffset, double yoffset);
+    void fullscreenchangeCallback(bool isFullscreen);
 };
 
 } // namespace nv

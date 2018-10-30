@@ -12,9 +12,5 @@
     * [piksel::Rng](reference/rng.md)
 
 * Examples
-    <!-- * [A* search algorithm](examples/astar.md)
-    * [Fireworks](examples/fireworks.md)
-    * [Keyboard interaction](examples/keyboard.md)
-    * [Mouse interaction](examples/mouse.md)
-    * [Quadtree](examples/quadtree.md) -->
-    * :construction: under construction :construction:
+    * [A* search algorithm](examples/astar/astar.md)
+    * [Quadtree](examples/quadtree/quadtree.md)

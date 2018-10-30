@@ -8,6 +8,7 @@
 #include <stb/stb_truetype.h>
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
 #define GLFW_INCLUDE_ES3
 #include <GLFW/glfw3.h>
 #include <GLES3/gl3.h>
@@ -72,13 +73,13 @@ void BaseApp::start() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 #ifdef __EMSCRIPTEN__
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    devicePixelRatio = emscripten_get_device_pixel_ratio();
 #else
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
-
-    window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+    window = glfwCreateWindow(width * devicePixelRatio, height * devicePixelRatio, title.c_str(), NULL, NULL);
 
     if (!window) {
         fputs("Failed to create GLFW window", stderr);
@@ -89,6 +90,14 @@ void BaseApp::start() {
         exit(EXIT_FAILURE);
 #endif
     }
+
+#ifdef __EMSCRIPTEN__
+    EM_ASM(
+        var canvas = document.getElementById('canvas');
+        canvas.style.width = (canvas.width / window.devicePixelRatio) + 'px';
+        canvas.style.height = (canvas.height / window.devicePixelRatio) + 'px';
+    );
+#endif
 
     glfwMakeContextCurrent(window);
 #ifndef __EMSCRIPTEN__
@@ -126,6 +135,13 @@ void BaseApp::start() {
         ((BaseApp*) glfwGetWindowUserPointer(window))->scrollCallback(xoffset, yoffset);
     };
     glfwSetScrollCallback(window, _scrollCallback);
+#ifdef __EMSCRIPTEN__
+    auto _fullscreenchangeCallback = [](int eventType, const EmscriptenFullscreenChangeEvent *fullscreenChangeEvent, void *userData) {
+        ((BaseApp*) userData)->fullscreenchangeCallback(fullscreenChangeEvent->isFullscreen);
+        return 1;
+    };
+    emscripten_set_fullscreenchange_callback("#document", this, true, _fullscreenchangeCallback);
+#endif
 
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -436,7 +452,7 @@ void BaseApp::keyCallback(int key, int scancode, int action, int mods) {
 }
 
 void BaseApp::cursorPosCallback(double xpos, double ypos) {
-    mouseMoved(xpos, ypos);
+    mouseMoved(xpos / devicePixelRatio, ypos / devicePixelRatio);
 }
 
 void BaseApp::mouseButtonCallback(int button, int action, int mods) {
@@ -450,6 +466,18 @@ void BaseApp::mouseButtonCallback(int button, int action, int mods) {
 void BaseApp::scrollCallback(double xoffset, double yoffset) {
     if (yoffset < 0.0 || 0.0 < yoffset) {
         mouseWheel(yoffset);
+    }
+}
+
+void BaseApp::fullscreenchangeCallback(bool isFullscreen) {
+    if (!isFullscreen) {
+        EM_ASM(
+            setTimeout(function() {
+                var canvas = document.getElementById('canvas');
+                canvas.style.width = (canvas.width / window.devicePixelRatio) + 'px';
+                canvas.style.height = (canvas.height / window.devicePixelRatio) + 'px';
+            }, 0); // dirty hack :)
+        );
     }
 }
 
