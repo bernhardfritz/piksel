@@ -1,6 +1,6 @@
 # A* search algorithm
 
-<iframe src="/examples/astar/_media/astar.html" width="512px" height="512px" scrolling="no"></iframe>
+[astar](_media/astar.html ':include width=512px height=512px scrolling=no')
 
 <div id="el">
     <div class="tabs">

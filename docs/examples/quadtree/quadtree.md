@@ -1,6 +1,6 @@
 # Quadtree
 
-<iframe src="/examples/quadtree/_media/quadtree.html" width="512px" height="512px" scrolling="no"></iframe>
+[quadtree](_media/quadtree.html ':include width=512px height=512px scrolling=no')
 
 <div id="el">
     <div class="tabs">
