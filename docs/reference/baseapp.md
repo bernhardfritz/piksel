@@ -1,4 +1,4 @@
-# piksel::BaseApp
+<h1>piksel::BaseApp</h1>
 
 This base class is intended to be inherited by a derived class provided by you.
 

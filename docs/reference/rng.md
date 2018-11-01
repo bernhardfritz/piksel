@@ -1,4 +1,4 @@
-# piksel::Rng
+<h1>piksel::Rng</h1>
 
 ## getInstance
 

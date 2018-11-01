@@ -33,8 +33,8 @@ Module.expectedDataFileDownloads++;
     } else {
       throw 'using preloaded data can only be done on a web page or in a web worker';
     }
-    var PACKAGE_NAME = 'index.data';
-    var REMOTE_PACKAGE_BASE = 'index.data';
+    var PACKAGE_NAME = 'astar.data';
+    var REMOTE_PACKAGE_BASE = 'astar.data';
     if (typeof Module['locateFilePackage'] === 'function' && !Module['locateFile']) {
       Module['locateFile'] = Module['locateFilePackage'];
       err('warning: you defined Module.locateFilePackage, that has been renamed to Module.locateFile (using your locateFilePackage for now)');
@@ -166,10 +166,10 @@ Module['FS_createPath']('/', 'data', true, true);
           for (var i = 0; i < files.length; ++i) {
             DataRequest.prototype.requests[files[i].filename].onload();
           }
-              Module['removeRunDependency']('datafile_index.data');
+              Module['removeRunDependency']('datafile_astar.data');
 
     };
-    Module['addRunDependency']('datafile_index.data');
+    Module['addRunDependency']('datafile_astar.data');
   
     if (!Module.preloadResults) Module.preloadResults = {};
   
@@ -190,7 +190,7 @@ Module['FS_createPath']('/', 'data', true, true);
   }
 
  }
- loadPackage({"files": [{"start": 0, "audio": 0, "end": 0, "filename": "/data/dummy"}, {"start": 0, "audio": 0, "end": 0, "filename": "/data/placeholder.txt"}], "remote_package_size": 0, "package_uuid": "e3088eb5-9a1a-4c97-be42-8113091c8dfc"});
+ loadPackage({"files": [{"start": 0, "audio": 0, "end": 0, "filename": "/data/dummy"}, {"start": 0, "audio": 0, "end": 0, "filename": "/data/placeholder.txt"}], "remote_package_size": 0, "package_uuid": "1fbe2905-1745-44fc-b094-3b83a8a80871"});
 
 })();
 
@@ -1664,9 +1664,9 @@ function integrateWasmJS() {
 
   var method = 'native-wasm';
 
-  var wasmTextFile = 'index.wast';
-  var wasmBinaryFile = 'index.wasm';
-  var asmjsCodeFile = 'index.temp.asm.js';
+  var wasmTextFile = 'astar.wast';
+  var wasmBinaryFile = 'astar.wasm';
+  var asmjsCodeFile = 'astar.temp.asm.js';
 
   if (!isDataURI(wasmTextFile)) {
     wasmTextFile = locateFile(wasmTextFile);

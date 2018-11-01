@@ -1,4 +1,4 @@
-# piksel::Graphics
+<h1>piksel::Graphics</h1>
 
 ## applyMatrix
 

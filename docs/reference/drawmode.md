@@ -1,4 +1,4 @@
-# piksel::DrawMode
+<h1>piksel::DrawMode</h1>
 
 `piksel::DrawMode` is an enum class used by [ellipseMode](reference/graphics.md#ellipseMode), [imageMode](reference/graphics.md#imageMode) and [rectMode](reference/graphics.md#rectMode) in order to change the way in which parameters given to the shape functions [ellipse](reference/graphics.md#ellipse), [image](reference/graphics.md#image) and [rect](reference/graphics.md#rect) are interpreted.
 

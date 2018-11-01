@@ -1,4 +1,4 @@
-# piksel::Image
+<h1>piksel::Image</h1>
 
 ## load
 

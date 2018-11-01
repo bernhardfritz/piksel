@@ -1,4 +1,4 @@
-# piksel::Font
+<h1>piksel::Font</h1>
 
 ## load
 
