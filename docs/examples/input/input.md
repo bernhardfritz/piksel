@@ -31,9 +31,11 @@ void App::draw(piksel::Graphics& g) {
     g.line(lastX, 0, lastX, height);
     g.line(0, lastY, width, lastY);
     g.noStroke();
-    g.text(std::to_string(lastX) + ", " + std::to_string(lastY), lastX + 5, lastY - 5);
+    g.text(std::to_string(lastX) + ", " + std::to_string(lastY),
+        lastX + 5, lastY - 5);
     g.textSize(64);
-    g.text(std::string(1, lastKey) + " : " + std::to_string(lastKey), width / 4, height / 2 + 16);
+    g.text(std::string(1, lastKey) + " : " + std::to_string(lastKey),
+        width / 4, height / 2 + 16);
 }
 
 void App::keyPressed(int key) {
