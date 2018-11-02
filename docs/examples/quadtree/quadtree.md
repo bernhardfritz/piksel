@@ -4,51 +4,13 @@
 
 <div id="el">
     <div class="tabs">
-        <input name="tabs" type="radio" id="tab-1" checked="checked" class="input"/>
-        <label for="tab-1" class="label">aabb.cpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(aabbcpp)"></code></pre>
-        </div>
-        <input name="tabs" type="radio" id="tab-2" class="input"/>
-        <label for="tab-2" class="label">aabb.hpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(aabbhpp)"></code></pre>
-        </div>
-        <input name="tabs" type="radio" id="tab-3" class="input"/>
-        <label for="tab-3" class="label">app.cpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(appcpp)"></code></pre>
-        </div>
-        <input name="tabs" type="radio" id="tab-4" class="input"/>
-        <label for="tab-4" class="label">app.hpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(apphpp)"></code></pre>
-        </div>
-        <input name="tabs" type="radio" id="tab-5" class="input"/>
-        <label for="tab-5" class="label">main.cpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(maincpp)"></code></pre>
-        </div>
-        <input name="tabs" type="radio" id="tab-6" class="input"/>
-        <label for="tab-6" class="label">quadtree.cpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(quadtreecpp)"></code></pre>
-        </div>
-        <input name="tabs" type="radio" id="tab-7" class="input"/>
-        <label for="tab-7" class="label">quadtree.hpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(quadtreehpp)"></code></pre>
-        </div>
-        <input name="tabs" type="radio" id="tab-8" class="input"/>
-        <label for="tab-8" class="label">xy.cpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(xycpp)"></code></pre>
-        </div>
-        <input name="tabs" type="radio" id="tab-9" class="input"/>
-        <label for="tab-9" class="label">xy.hpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(xyhpp)"></code></pre>
-        </div>
+        <template v-for="file in files">
+            <input name="tabs" type="radio" v-bind:id="'tab-' + (files.indexOf(file) + 1)" checked="checked" class="input"/>
+            <label v-bind:for="'tab-' + (files.indexOf(file) + 1)" class="label">{{ file.name }}</label>
+            <div class="panel">
+                <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(file.content)"></code></pre>
+            </div>
+        </template>
     </div>
 </div>
 
@@ -56,7 +18,9 @@
 new Vue({
     el: '#el',
     data: {
-        aabbcpp: `#include "aabb.hpp"
+        files: [{
+            name: 'aabb.cpp',
+            content: `#include "aabb.hpp"
 #include <piksel/drawmode.hpp>
 
 bool AABB::containsPoint(XY& point) {
@@ -80,8 +44,10 @@ void AABB::draw(piksel::Graphics& g, glm::vec4 color) {
     g.rectMode(piksel::DrawMode::RADIUS);
     g.rect(center.x, center.y, halfDimension, halfDimension);
     g.pop();
-}`,
-        aabbhpp: `#ifndef AABB_HPP
+}`
+        }, {
+            name: 'aabb.hpp',
+            content: `#ifndef AABB_HPP
 #define AABB_HPP
 
 #include "xy.hpp"
@@ -102,8 +68,10 @@ public:
     void draw(piksel::Graphics& g, glm::vec4 color);
 };
 
-#endif /* AABB_HPP */`,
-        appcpp: `#include "app.hpp"
+#endif /* AABB_HPP */`
+        }, {
+            name: 'app.cpp',
+            content: `#include "app.hpp"
 #include "quadtree.hpp"
 #include <piksel/rng.hpp>
 
@@ -141,8 +109,10 @@ void App::draw(piksel::Graphics& g) {
 
 void App::mouseMoved(int x, int y) {
     aabb.center = XY(x, y);
-}`,
-        apphpp: `#ifndef APP_HPP
+}`
+        }, {
+            name: 'app.hpp',
+            content: `#ifndef APP_HPP
 #define APP_HPP
 
 #include <piksel/baseapp.hpp>
@@ -155,14 +125,18 @@ public:
     void mouseMoved(int x, int y);
 };
 
-#endif /* APP_HPP */`,
-        maincpp: `#include "app.hpp"
+#endif /* APP_HPP */`
+        }, {
+            name: 'main.cpp',
+            content: `#include "app.hpp"
 
 int main() {
     App app;
     app.start();
-}`,
-        quadtreecpp: `#include "quadtree.hpp"
+}`
+        }, {
+            name: 'quadtree.cpp',
+            content: `#include "quadtree.hpp"
 
 QuadTree::~QuadTree() {
     delete nw;
@@ -281,8 +255,10 @@ void QuadTree::draw(
     ne->draw(g, boundaryColor, pointColor);
     sw->draw(g, boundaryColor, pointColor);
     se->draw(g, boundaryColor, pointColor);
-}`,
-        quadtreehpp: `#ifndef QUADTREE_HPP
+}`
+        }, {
+            name: 'quadtree.hpp',
+            content: `#ifndef QUADTREE_HPP
 #define QUADTREE_HPP
 
 #include "aabb.hpp"
@@ -320,8 +296,10 @@ private:
     void subdivide();
 };
 
-#endif /* QUADTREE_HPP */`,
-        xycpp: `#include "xy.hpp"
+#endif /* QUADTREE_HPP */`
+        }, {
+            name: 'xy.cpp',
+            content: `#include "xy.hpp"
 
 void XY::draw(piksel::Graphics& g, glm::vec4 color) {
     g.push();
@@ -329,8 +307,10 @@ void XY::draw(piksel::Graphics& g, glm::vec4 color) {
     g.strokeWeight(3.0f);
     g.point(x, y);
     g.pop();
-}`,
-        xyhpp: `#ifndef XY_HPP
+}`
+        }, {
+            name: 'xy.hpp',
+            content: `#ifndef XY_HPP
 #define XY_HPP
 
 #include <piksel/graphics.hpp>
@@ -349,6 +329,7 @@ public:
 };
 
 #endif /* XY_HPP */`
+        }]
     },
     methods: {
         highlight: function(code) {

@@ -7,3 +7,6 @@
 [submodule "lib/msdfgen/msdfgen"]
 	path = lib/msdfgen/msdfgen
 	url = https://github.com/Chlumsky/msdfgen.git
+[submodule "lib/cpp-base64/cpp-base64"]
+	path = lib/cpp-base64/cpp-base64
+	url = https://github.com/ReneNyffenegger/cpp-base64.git

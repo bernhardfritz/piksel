@@ -42,6 +42,7 @@ public:
     void push();
     void rect(float x, float y, float w, float h);
     void rectMode(DrawMode rectMode);
+    void resetFont();
     void resetMatrix();
     void rotate(float rad);
     void scale(float x, float y);

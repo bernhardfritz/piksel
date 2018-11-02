@@ -1,5 +1,6 @@
 #include "graphics.hpp"
 #include "shape.hpp"
+#include "internals.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <stb/stb_truetype.h>
 
@@ -143,6 +144,10 @@ void Graphics::rectMode(DrawMode rectMode) {
     state.shaderIrrelevantState.rectMode = rectMode;
 }
 
+void Graphics::resetFont() {
+    textFont(minecraft_regular);
+}
+
 void Graphics::resetMatrix() {
     State& state = peek();
     state.shaderRelevantState.modelMatrix = glm::mat4(1.0f);
@@ -175,7 +180,10 @@ void Graphics::text(std::string str, float x, float y) {
     }
     State& state = peek();
     Font* font = state.shaderIrrelevantState.textFont;
-    if (!font || font->letters.empty()) {
+    if (!font) {
+        font = &minecraft_regular;
+    }
+    if (font->letters.empty()) {
         return;
     }
     float textScale = state.shaderIrrelevantState.textSize / SHAPE_HEIGHT;

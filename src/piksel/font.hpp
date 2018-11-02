@@ -21,6 +21,7 @@ public:
 
     Font() : info(nullptr) {}
     ~Font();
+    int _load(const unsigned char* fontBuffer);
     int load(std::string filename);
 };
 

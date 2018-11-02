@@ -6,6 +6,7 @@
 #include <stb/stb_image.h>
 #define STB_TRUETYPE_IMPLEMENTATION
 #include <stb/stb_truetype.h>
+#include <cpp-base64/base64.h>
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
@@ -37,6 +38,8 @@ const bool USE_EMSCRIPTEN = true;
 #else
 const bool USE_EMSCRIPTEN = false;
 #endif
+
+Font minecraft_regular;
 
 void errorCallback(int error, const char* description) {
     fprintf(stderr, "Error: %s\n", description);
@@ -312,6 +315,9 @@ void BaseApp::start() {
     shapes.push_back(ellipse);
     shapes.push_back(triangle);
 
+    std::string minecraft_regular_decoded = base64_decode(minecraft_regular_encoded);
+    minecraft_regular._load(reinterpret_cast<const unsigned char *>(minecraft_regular_decoded.c_str()));
+
     setup();
 
     Graphics g(width, height, framebufferWidth, framebufferHeight, stateStack, shaderRelevantStateVector, shapes);
@@ -412,7 +418,7 @@ void BaseApp::mainLoop(Graphics& g) {
     }
     // reset the modelMatrix of the first state (otherwise transformations would be applied cumulatively)
     State& state = stateStack.top();
-    state.shaderRelevantState.modelMatrix = glm::mat4(1.0f);
+    state = State(); // reset state
     shaderRelevantStateVector.clear();
     // doing the above steps before glfwPollEvents is essential to
     // allow changing style inside of key and mouse event handlers
@@ -469,7 +475,9 @@ void BaseApp::scrollCallback(double xoffset, double yoffset) {
     }
 }
 
+
 void BaseApp::fullscreenchangeCallback(bool isFullscreen) {
+#ifdef __EMSCRIPTEN__
     if (!isFullscreen) {
         EM_ASM(
             setTimeout(function() {
@@ -479,6 +487,7 @@ void BaseApp::fullscreenchangeCallback(bool isFullscreen) {
             }, 0); // dirty hack :)
         );
     }
+#endif
 }
 
 } // namespace nv

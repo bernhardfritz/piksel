@@ -7,16 +7,7 @@ Font::~Font() {
     delete info;
 }
 
-int Font::load(std::string filename) {
-    long size;
-    unsigned char* fontBuffer;
-    FILE* fontFile = fopen(filename.c_str(), "rb");
-    fseek(fontFile, 0, SEEK_END);
-    size = ftell(fontFile);
-    fseek(fontFile, 0, SEEK_SET);
-    fontBuffer = (unsigned char *) malloc(size);
-    fread(fontBuffer, size, 1, fontFile);
-    fclose(fontFile);
+int Font::_load(const unsigned char* fontBuffer) {
     info = new stbtt_fontinfo();
     if (!stbtt_InitFont(info, fontBuffer, 0)) {
         fputs("Failed to load font", stderr);
@@ -75,6 +66,19 @@ int Font::load(std::string filename) {
     }
 
     return 1;
+}
+
+int Font::load(std::string filename) {
+    long size;
+    unsigned char* fontBuffer;
+    FILE* fontFile = fopen(filename.c_str(), "rb");
+    fseek(fontFile, 0, SEEK_END);
+    size = ftell(fontFile);
+    fseek(fontFile, 0, SEEK_SET);
+    fontBuffer = (unsigned char *) malloc(size);
+    fread(fontBuffer, size, 1, fontFile);
+    fclose(fontFile);
+    return _load(fontBuffer);
 }
 
 } // namespace nv

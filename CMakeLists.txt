@@ -29,6 +29,12 @@ set(MSDFGEN_SOURCES
 
 add_library(msdfgen STATIC ${MSDFGEN_SOURCES})
 
+set(BASE64_SOURCES
+    lib/cpp-base64/cpp-base64/base64.cpp
+)
+
+add_library(cpp-base64 STATIC ${BASE64_SOURCES})
+
 set(SOURCES
     src/piksel/baseapp.cpp
     src/piksel/font.cpp
@@ -46,11 +52,13 @@ target_include_directories(piksel PUBLIC
     lib/stb/include
     lib/msdfgen
     lib/glad/include
+    lib/cpp-base64
 )
 
 if(EMSCRIPTEN)
 target_link_libraries(piksel
     msdfgen
+    cpp-base64
 )
 else()
 add_library(glad STATIC lib/glad/src/glad.c)
@@ -66,6 +74,7 @@ target_link_libraries(piksel
     glad
     glfw
     msdfgen
+    cpp-base64
 )
 endif(EMSCRIPTEN)
 

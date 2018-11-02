@@ -4,31 +4,13 @@
 
 <div id="el">
     <div class="tabs">
-        <input name="tabs" type="radio" id="tab-1" checked="checked" class="input"/>
-        <label for="tab-1" class="label">app.cpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(appcpp)"></code></pre>
-        </div>
-        <input name="tabs" type="radio" id="tab-2" class="input"/>
-        <label for="tab-2" class="label">app.hpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(apphpp)"></code></pre>
-        </div>
-        <input name="tabs" type="radio" id="tab-3" class="input"/>
-        <label for="tab-3" class="label">astar.cpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(astarcpp)"></code></pre>
-        </div>
-        <input name="tabs" type="radio" id="tab-4" class="input"/>
-        <label for="tab-4" class="label">astar.hpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(astarhpp)"></code></pre>
-        </div>
-        <input name="tabs" type="radio" id="tab-5" class="input"/>
-        <label for="tab-5" class="label">main.cpp</label>
-        <div class="panel">
-            <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(maincpp)"></code></pre>
-        </div>
+        <template v-for="file in files">
+            <input name="tabs" type="radio" v-bind:id="'tab-' + (files.indexOf(file) + 1)" checked="checked" class="input"/>
+            <label v-bind:for="'tab-' + (files.indexOf(file) + 1)" class="label">{{ file.name }}</label>
+            <div class="panel">
+                <pre data-lang="cpp"><code class="lang-cpp" v-html="highlight(file.content)"></code></pre>
+            </div>
+        </template>
     </div>
 </div>
 
@@ -36,7 +18,9 @@
 new Vue({
     el: '#el',
     data: {
-        appcpp: `#include "app.hpp"
+        files: [{
+            name: 'app.cpp',
+            content: `#include "app.hpp"
 #include "astar.hpp"
 #include <glm/glm.hpp>
 #include <piksel/rng.hpp>
@@ -111,8 +95,10 @@ void App::mouseMoved(int x, int y) {
     if (gx != prevGx || gy != prevGy) {
         initAStar();
     }
-}`,
-        apphpp: `#ifndef APP_HPP
+}`
+        }, {
+            name: 'app.hpp',
+            content: `#ifndef APP_HPP
 #define APP_HPP
 
 #include <piksel/baseapp.hpp>
@@ -125,8 +111,10 @@ public:
     void mouseMoved(int x, int y);
 };
 
-#endif /* APP_HPP */`,
-        astarcpp: `#include "astar.hpp"
+#endif /* APP_HPP */`
+        }, {
+            name: 'astar.cpp',
+            content: `#include "astar.hpp"
 #include <queue>
 #include <cmath>
 #include <algorithm>
@@ -270,8 +258,10 @@ std::vector<std::pair<int, int>> AStar::findPath(
     }
 
     return path;
-}`,
-        astarhpp: `#ifndef ASTAR_HPP
+}`
+        }, {
+            name: 'astar.hpp',
+            content: `#ifndef ASTAR_HPP
 #define ASTAR_HPP
 
 #include <vector>
@@ -303,13 +293,16 @@ private:
     bool isCollisionAt(int x, int y);
 };
 
-#endif /* ASTAR_HPP */`,
-        maincpp: `#include "app.hpp"
+#endif /* ASTAR_HPP */`
+        }, {
+            name: 'main.cpp',
+            content: `#include "app.hpp"
 
 int main() {
     App app;
     app.start();
 }`
+        }]
     },
     methods: {
         highlight: function(code) {

@@ -246,6 +246,14 @@ void rectMode(piksel::DrawMode rectMode);
 |-|-|
 |`piksel::DrawMode rectMode`|the [piksel::DrawMode](reference/drawmode.md) to use when drawing rectangles|
 
+## resetFont
+
+Replaces the current font with the default font.
+
+```cpp
+void resetFont();
+```
+
 ## resetMatrix
 
 Replaces the current matrix with the identity matrix.
