@@ -14,6 +14,10 @@ namespace piksel {
 
 Image msdf;
 
+bool Shape::operator==(const Shape& shape) const {
+    return xoff == shape.xoff && yoff == shape.yoff;
+}
+
 static void invertColor(msdfgen::Bitmap<msdfgen::FloatRGB>& bitmap) {
     for (int y = 0; y < bitmap.height(); y++) {
         for (int x = 0; x < bitmap.width(); x++) {
@@ -29,12 +33,12 @@ static void calculateShapeOffset(int shapeIndex, int& xoff, int& yoff) {
     yoff = ((shapeIndex * SHAPE_WIDTH) / TEXTURE_WIDTH) * SHAPE_HEIGHT;
 }
 
-int registerShape(msdfgen::Shape& msdfgenShape, Shape& nvShape) {
+int registerShape(msdfgen::Shape& msdfgenShape, Shape& pikselShape) {
     static int shapeIndex = 0;
 
-    calculateShapeOffset(shapeIndex, nvShape.xoff, nvShape.yoff);
+    calculateShapeOffset(shapeIndex, pikselShape.xoff, pikselShape.yoff);
 
-    if (TEXTURE_WIDTH - nvShape.xoff < SHAPE_WIDTH || TEXTURE_HEIGHT - nvShape.yoff < SHAPE_HEIGHT) {
+    if (TEXTURE_WIDTH - pikselShape.xoff < SHAPE_WIDTH || TEXTURE_HEIGHT - pikselShape.yoff < SHAPE_HEIGHT) {
         fputs("Failed to register shape. Maximum number of shapes has been reached.", stderr);
         return -1;
     }
@@ -120,21 +124,21 @@ int registerShape(msdfgen::Shape& msdfgenShape, Shape& nvShape) {
     }
 
     glBindTexture(GL_TEXTURE_2D, msdf._texture);
-    glTexSubImage2D(GL_TEXTURE_2D, 0, nvShape.xoff, msdf.height - nvShape.yoff - SHAPE_HEIGHT, SHAPE_WIDTH - 1, SHAPE_HEIGHT - 1, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, pikselShape.xoff, msdf.height - pikselShape.yoff - SHAPE_HEIGHT, SHAPE_WIDTH - 1, SHAPE_HEIGHT - 1, GL_RGB, GL_UNSIGNED_BYTE, pixels);
     // glGenerateMipmap(GL_TEXTURE_2D); // dont think this is necessary
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return shapeIndex++;
 }
 
-int describeShape(std::string shapeDescription, Shape& nvShape) {
+int describeShape(std::string shapeDescription, Shape& pikselShape) {
     msdfgen::Shape msdfgenShape;
 
     if (!shapeDescription.empty()) {
         msdfgen::readShapeDescription(shapeDescription.c_str(), msdfgenShape);
     }
 
-    return registerShape(msdfgenShape, nvShape);
+    return registerShape(msdfgenShape, pikselShape);
 }
 
 } // namespace nv

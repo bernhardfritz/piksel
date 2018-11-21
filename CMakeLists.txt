@@ -35,14 +35,24 @@ set(BASE64_SOURCES
 
 add_library(cpp-base64 STATIC ${BASE64_SOURCES})
 
+set(JSON11_SOURCES
+    lib/json11/json11/json11.cpp
+)
+
+add_library(json11 STATIC ${JSON11_SOURCES})
+
 set(SOURCES
     src/piksel/baseapp.cpp
     src/piksel/font.cpp
     src/piksel/graphics.cpp
     src/piksel/image.cpp
-    src/piksel/rng.cpp
     src/piksel/shader.cpp
     src/piksel/shape.cpp
+    src/piksel/ext/rng.cpp
+    src/piksel/ext/sprite.cpp
+    src/piksel/ext/spritesheet.cpp
+    src/piksel/ext/animation.cpp
+    src/piksel/ext/timer.cpp
 )
 add_library(piksel ${SOURCES})
 
@@ -53,12 +63,14 @@ target_include_directories(piksel PUBLIC
     lib/msdfgen
     lib/glad/include
     lib/cpp-base64
+    lib/json11
 )
 
 if(EMSCRIPTEN)
 target_link_libraries(piksel
     msdfgen
     cpp-base64
+    json11
 )
 else()
 add_library(glad STATIC lib/glad/src/glad.c)
@@ -75,6 +87,7 @@ target_link_libraries(piksel
     glfw
     msdfgen
     cpp-base64
+    json11
 )
 endif(EMSCRIPTEN)
 

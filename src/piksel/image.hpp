@@ -20,6 +20,9 @@ public:
     int width = 1, height = 1, _index = -1;
 
     int load(std::string filename);
+    int loadBase64(std::string encoded);
+private:
+    int _load(unsigned char* data);
 };
 
 } // namespace nv

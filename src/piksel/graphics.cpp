@@ -55,7 +55,7 @@ void Graphics::image(Image& img, float dx, float dy, float dWidth, float dHeight
 	glBindTexture(GL_TEXTURE_2D, img._texture);
 	state.shaderRelevantState.textureMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(sx / img.width, (img.height - sy - sHeight) / img.height, 0.0f));
 	state.shaderRelevantState.textureMatrix = glm::scale(state.shaderRelevantState.textureMatrix, glm::vec3(sWidth / img.width, sHeight / img.height, 1.0f));
-    // state.shaderRelevantState.textureMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0f)); // for debug
+    // state.shaderRelevantState.textureMatrix = glm::mat4(1.0f); // for debug
     state.shaderRelevantState.textureIndex = img._index % 8;
     _rect(dx, dy, dWidth, dHeight);
     pop();
@@ -90,6 +90,10 @@ void Graphics::line(float x1, float y1, float x2, float y2) {
     // ellipse(0.0f, state.shaderRelevantState.strokeWeight / 2.0f, state.shaderRelevantState.strokeWeight, state.shaderRelevantState.strokeWeight);
     // ellipse(glm::length(r), state.shaderRelevantState.strokeWeight / 2.0f, state.shaderRelevantState.strokeWeight, state.shaderRelevantState.strokeWeight);
 	pop();
+}
+
+int Graphics::millis() {
+    return glfwGetTime() * 1000;
 }
 
 void Graphics::noFill() {
@@ -298,6 +302,12 @@ void Graphics::drawShape(const Shape& shape, DrawMode drawMode, float a, float b
             // just in case
             state.shaderRelevantState.strokeColor = state.shaderRelevantState.fillColor;
             state.shaderRelevantState.strokeColor.a = 0.0f;
+            if (shape == shapes[0]) { // if shape is rect then take shortcut
+                state.shaderRelevantState.textureIndex = -1;
+                _rect(a, b, c, d);
+                pop();
+                return;
+            }
         } else if (!state.shaderIrrelevantState.fill && state.shaderIrrelevantState.stroke) {
             state.shaderRelevantState.fillColor = state.shaderRelevantState.strokeColor;
             state.shaderRelevantState.fillColor.a = 0.0f;

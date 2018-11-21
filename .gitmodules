@@ -10,3 +10,6 @@
 [submodule "lib/cpp-base64/cpp-base64"]
 	path = lib/cpp-base64/cpp-base64
 	url = https://github.com/ReneNyffenegger/cpp-base64.git
+[submodule "lib/json11/json11"]
+	path = lib/json11/json11
+	url = https://github.com/dropbox/json11.git

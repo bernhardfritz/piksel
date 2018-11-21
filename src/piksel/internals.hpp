@@ -89,7 +89,7 @@ void main() {
     vec4 color;
 
     int textureIndex = int(v_textureIndex + 0.5);
-    if (textureIndex == -1) {
+    if (v_textureIndex < 0.0) {
         color = v_fillColor;
     } else if (textureIndex == 0) {
         vec2 msdfUnit = pxRange / msdfSize;

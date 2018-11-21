@@ -16,21 +16,23 @@ extern Image msdf;
 
 struct Shape {
     int xoff, yoff;
+
+    bool operator==(const Shape& shape) const;
 };
 
 /**
- * In: msdfgenShape; Out: nvShape
+ * In: msdfgenShape; Out: pikselShape
  * If everything goes well, this function returns an int >= 0, representing the index of the shape.
  * -1 otherwise.
  */
-int registerShape(msdfgen::Shape& msdfgenShape, Shape& nvShape);
+int registerShape(msdfgen::Shape& msdfgenShape, Shape& pikselShape);
 
 /**
- * In: shapeDescription (msdfgen shape description syntax); Out: nvShape
+ * In: shapeDescription (msdfgen shape description syntax); Out: pikselShape
  * If everything goes well, this function returns an int >= 0, representing the index of the shape.
  * -1 otherwise.
  */
-int describeShape(std::string shapeDescription, Shape& nvShape);
+int describeShape(std::string shapeDescription, Shape& pikselShape);
 
 } // namespace nv
 

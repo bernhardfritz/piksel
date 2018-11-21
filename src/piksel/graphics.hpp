@@ -34,6 +34,7 @@ public:
     void image(Image& img, float x, float y, float w, float h);
     void imageMode(DrawMode imageMode);
     void line(float x1, float y1, float x2, float y2);
+    int millis();
     void noFill();
     void noStroke();
     void noTint();
