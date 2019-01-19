@@ -15,3 +15,4 @@
     * [A* search algorithm](examples/astar/astar.md)
     * [Input](examples/input/input.md)
     * [Quadtree](examples/quadtree/quadtree.md)
+    * [Mario breaks out](examples/mariobreaksout/mariobreaksout.md)
