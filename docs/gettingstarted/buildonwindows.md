@@ -20,4 +20,4 @@ This allows you to write your code in Windows, using the code editors you are ac
 
 #### Build for the web on Windows
 
-With WSL set up, you can continue the [Build for the web](gettingstarted/buildproject.md#build-for-the-web-img-srcgettingstarted_mediawindows_logo_2012-blacksvgdata-origin_mediawindows_logo_2012-blacksvg-altwindows) guide.
+With WSL set up, you can continue the [Build for the web](gettingstarted/buildproject.md#build-for-the-web-) guide.

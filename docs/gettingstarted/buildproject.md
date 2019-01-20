@@ -2,9 +2,9 @@
 
 `piksel` allows you to build your project natively or for the web through the power of WebAssembly. Native builds are probably more preferable during development since they are far easier to debug. Once you feel like trying out your app in a browser, go ahead and build for the web. Native and web builds do not interfere with each other, you are safe to target both at the same time.
 
-## Build natively ![linux](_media/Linux_Logo_in_Linux_Libertine_Font.svg) ![macos](_media/Apple_logo_black.svg)
+## Build natively ![linux](_media/linux.svg) ![macos](_media/macos.svg)
 
-!> Native builds are currently not supported on **Windows**. Please [build for the web](gettingstarted/buildproject.md#build-for-the-web-img-srcgettingstarted_mediawindows_logo_2012-blacksvgdata-origin_mediawindows_logo_2012-blacksvg-altwindows) instead for now.
+!> Native builds are currently not supported on **Windows**. Please [build for the web](gettingstarted/buildproject.md#build-for-the-web-) instead for now.
 
 #### Generate the Makefile using cmake
 
@@ -34,7 +34,7 @@ From now on, everytime you modify your sourcecode, you merely need to call `make
 ./index
 ```
 
-## Build for the web ![linux](_media/Linux_Logo_in_Linux_Libertine_Font.svg) ![macos](_media/Apple_logo_black.svg) ![windows](_media/Windows_logo_2012-Black.svg)
+## Build for the web ![linux](_media/linux.svg) ![macos](_media/macos.svg) ![windows](_media/windows.svg)
 
 >If you are a **Windows** user, please refer to [this guide](gettingstarted/buildonwindows.md#how-to-build-on-windows) before you continue.
 
