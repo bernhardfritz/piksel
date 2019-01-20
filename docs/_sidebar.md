@@ -1,6 +1,7 @@
 * Getting started
     * [How to setup a new project](gettingstarted/setupproject.md)
     * [How to build your project](gettingstarted/buildproject.md)
+    * [Troubleshooting](gettingstarted/troubleshooting.md)
 
 * Reference
     * [piksel::BaseApp](reference/baseapp.md)

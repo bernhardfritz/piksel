@@ -1,10 +1,10 @@
 # How to build your project
 
-> This guide has so far been tested on macOS Mojave only. I'm pretty confident that it will also apply to Linux based operating systems. Not so sure about Windows based systems, though. I'll update the guide if there are any differences.
-
 `piksel` allows you to build your project natively or for the web through the power of WebAssembly. Native builds are probably more preferable during development since they are far easier to debug. Once you feel like trying out your app in a browser, go ahead and build for the web. Native and web builds do not interfere with each other, you are safe to target both at the same time.
 
-## Build natively
+## Build natively ![linux](_media/Tux_mono.svg) ![macos](_media/Apple_logo_black.svg)
+
+!> Native builds are currently not supported on **Windows**. Please [build for the web](gettingstarted/buildproject.md#build-for-the-web-img-srcgettingstarted_mediawindows_logo_2012-blacksvgdata-origin_mediawindows_logo_2012-blacksvg-altwindows) instead for now.
 
 #### Generate the Makefile using cmake
 
@@ -34,9 +34,11 @@ From now on, everytime you modify your sourcecode, you merely need to call `make
 ./index
 ```
 
-## Build for the web
+## Build for the web ![linux](_media/Tux_mono.svg) ![macos](_media/Apple_logo_black.svg) ![windows](_media/Windows_logo_2012-Black.svg)
 
-To build for the web, you first need to install Emscripten by following the [WebAssembly developer's guide](https://webassembly.org/getting-started/developers-guide/)
+>If you are a **Windows** user, please refer to [this guide](gettingstarted/buildonwindows.md#how-to-build-on-windows) before you continue.
+
+To build for the web, you first need to install Emscripten by following the [WebAssembly developer's guide](https://webassembly.org/getting-started/developers-guide/).
 
 #### Generate the Makefile using emcmake
 
