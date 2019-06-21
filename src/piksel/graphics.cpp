@@ -13,8 +13,8 @@ void Graphics::applyMatrix(float a, float b, float c, float d, float e, float f)
     glm::mat4 m = glm::mat4(
         a, b, 0, 0,
         c, d, 0, 0,
-        e, f, 1, 0,
-        0, 0, 0, 1
+        0, 0, 1, 0,
+        e, f, 0, 1
     );
     state.shaderRelevantState.modelMatrix = m * state.shaderRelevantState.modelMatrix;
 }

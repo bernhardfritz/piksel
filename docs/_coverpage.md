@@ -1,6 +1,6 @@
 ![logo](_media/logo.svg)
 
-# piksel <small>1.0</small>
+# piksel <small>1.1</small>
 
 > A simple 2D graphics library for C++
 
