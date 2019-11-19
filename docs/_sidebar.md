@@ -14,6 +14,7 @@
 
 * Examples
     * [A* search algorithm](examples/astar/astar.md)
+    * [Fireworks](examples/fireworks/fireworks.md)
     * [Input](examples/input/input.md)
     * [Quadtree](examples/quadtree/quadtree.md)
     * [Mario breaks out](examples/mariobreaksout/mariobreaksout.md)

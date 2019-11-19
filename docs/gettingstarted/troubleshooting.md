@@ -12,7 +12,7 @@ sudo apt install python2.7 python-pip nodejs
 
 **macOS:**
 ```bash
-brew install python2.7 python-pip nodejs
+brew install python@2 nodejs
 ```
 
 ## Emscripten commands are not recognized
