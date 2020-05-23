@@ -12,17 +12,20 @@ namespace piksel {
 
 class BaseApp {
 public:
-    BaseApp(int width, int height, std::string title)
+    BaseApp(int width, int height, std::string title, bool fullscreen = false)
         : width(width)
         , height(height)
+        , fullscreen(fullscreen)
         , title(title)
         , sboSize(1024 * sizeof(State))
         , postfx_texture(0)
         , devicePixelRatio(1.0f) {
     }
-    BaseApp(int width, int height) : BaseApp(width, height, "piksel") {
+    BaseApp(int width, int height, bool fullscreen = false) : BaseApp(width, height, "piksel", fullscreen) {
     }
-    BaseApp() : BaseApp(100, 100) {
+    BaseApp(bool fullscreen = false) : BaseApp(fullscreen ? -1 : 100, fullscreen ? -1 : 100, fullscreen) {
+    }
+    BaseApp(std::string title, bool fullscreen = false) : BaseApp(fullscreen ? -1 : 100, fullscreen ? -1 : 100, title, fullscreen) {
     }
     virtual ~BaseApp();
     virtual void draw(Graphics& g);
@@ -41,6 +44,7 @@ protected:
 private:
     std::string title;
     GLFWwindow* window;
+    bool fullscreen;
     int framebufferWidth, framebufferHeight;
     glm::mat4 projectionMatrix;
     GLuint vao, sbo;

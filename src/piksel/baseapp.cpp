@@ -70,6 +70,13 @@ void BaseApp::start() {
         exit(EXIT_FAILURE);
 #endif
     }
+#ifndef __EMSCRIPTEN__
+    if(fullscreen && width == -1){
+        const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        width = mode->width;
+        height = mode->height;
+    }
+#endif
 
     // glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_SAMPLES, 0); // disable msaa
@@ -82,8 +89,15 @@ void BaseApp::start() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #endif
-    window = glfwCreateWindow(width * devicePixelRatio, height * devicePixelRatio, title.c_str(), NULL, NULL);
-
+#ifdef __EMSCRIPTEN__
+        window = glfwCreateWindow(width * devicePixelRatio, height * devicePixelRatio, title.c_str(), NULL, NULL);
+#else
+    if (fullscreen) {
+        window = glfwCreateWindow(width * devicePixelRatio, height * devicePixelRatio, title.c_str(), glfwGetPrimaryMonitor(), NULL);
+    } else {
+        window = glfwCreateWindow(width * devicePixelRatio, height * devicePixelRatio, title.c_str(), NULL, NULL);
+    }
+#endif
     if (!window) {
         fputs("Failed to create GLFW window", stderr);
         glfwTerminate();
