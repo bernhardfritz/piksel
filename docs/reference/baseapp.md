@@ -4,13 +4,14 @@ This base class is intended to be inherited by a derived class provided by you.
 
 ## BaseApp
 
-When deriving `BaseApp` you can specify a constructor other than the default constructor to specify properties like width, height, title and whether to use fullscreen. Otherwise width, heigh, title and fullscreen default to 100, 100, "piksel" and false respectively.
+When deriving `BaseApp` you can specify a constructor other than the default constructor to specify properties like width, height, title and whether to use fullscreen. Otherwise width, height, title and fullscreen default to 100, 100, "piksel" and false respectively.
 
 ```cpp
-BaseApp(int width, int height, std::string title, fullscreen = false)
-BaseApp(int width, int height, fullscreen = false)
-BaseApp(std::string title, fullscreen = false)
-BaseApp(fullscreen = false)
+BaseApp(int width, int height, std::string title, bool fullscreen)
+BaseApp(int width, int height, std::string title)
+BaseApp(int width, int height)
+BaseApp(std::string title, bool fullscreen)
+BaseApp()
 ```
 
 ## draw

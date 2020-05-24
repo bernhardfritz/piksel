@@ -21,9 +21,9 @@ public:
         , postfx_texture(0)
         , devicePixelRatio(1.0f) {
     }
-    BaseApp(int width, int height, bool fullscreen = false) : BaseApp(width, height, "piksel", fullscreen) {
+    BaseApp(int width, int height) : BaseApp(width, height, "piksel") {
     }
-    BaseApp(bool fullscreen = false) : BaseApp(fullscreen ? -1 : 100, fullscreen ? -1 : 100, fullscreen) {
+    BaseApp() : BaseApp(100, 100) {
     }
     BaseApp(std::string title, bool fullscreen = false) : BaseApp(fullscreen ? -1 : 100, fullscreen ? -1 : 100, title, fullscreen) {
     }
