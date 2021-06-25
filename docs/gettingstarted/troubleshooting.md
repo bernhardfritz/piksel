@@ -45,3 +45,16 @@ cd cmake-$version.$build/
 make -j4
 sudo make install
 ```
+
+## The RandR headers were not found
+
+This error can happen during `Makefile` generation using `cmake ..` as part of the native compilation process on Linux. Some distributions do not include packages like `libgl1-mesa-dev` or `xorg-dev` per default. You can install them by typing:
+
+**Linux:**
+```bash
+sudo apt update
+sudo apt install libgl1-mesa-dev
+sudo apt install xorg-dev
+```
+
+After cleaning your build directory, you should be able to generate a `Makefile` using `cmake ..`.
