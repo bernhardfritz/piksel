@@ -22,6 +22,8 @@ Let's continue by cloning the piksel repository from GitHub. For this we will us
 git clone --recursive https://github.com/bernhardfritz/piksel.git
 ```
 
+>**Windows** users need to patch one of piksel's depencencies for native builds to work correctly. This can be done by entering `cd piksel` followed by `git apply windows.patch`.
+
 `piksel` does not require you to install any dependencies to your system. All required dependencies are self-contained within `piksel`.
 
 ## Write code

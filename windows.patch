@@ -1,0 +1,16 @@
+Submodule lib/msdfgen/msdfgen contains modified content
+diff --git a/lib/msdfgen/msdfgen/core/SignedDistance.h b/lib/msdfgen/msdfgen/core/SignedDistance.h
+index 034210f..5bc2beb 100644
+--- a/lib/msdfgen/msdfgen/core/SignedDistance.h
++++ b/lib/msdfgen/msdfgen/core/SignedDistance.h
+@@ -1,6 +1,10 @@
+ 
+ #pragma once
+ 
++#ifdef INFINITE
++#undef INFINITE
++#endif
++
+ namespace msdfgen {
+ 
+ /// Represents a signed distance and alignment, which together can be compared to uniquely determine the closest edge segment.

@@ -102,8 +102,8 @@ add_custom_target(touch_dummy ALL
     COMMAND ${CMAKE_COMMAND} -E touch ${DATA_SOURCE_DIR}/dummy
     DEPENDS make_data_directory
 )
-add_custom_target(create_data_symlink ALL
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${DATA_SOURCE_DIR} ${DATA_BINARY_DIR}
+add_custom_target(copy_data_directory ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${DATA_SOURCE_DIR} ${DATA_BINARY_DIR}
     DEPENDS touch_dummy
 )
-add_dependencies(piksel create_data_symlink)
+add_dependencies(piksel copy_data_directory)

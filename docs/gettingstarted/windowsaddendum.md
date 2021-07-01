@@ -1,6 +1,6 @@
-## How to build on Windows
+## Build for the web (Windows addendum)
 
-At the moment only web builds are supported on Windows using the **Windows Subsystem for Linux** (WSL). In theory native builds on Windows should also be possible, but that would require some adaptions to piksel's [CMakeLists.txt](https://github.com/bernhardfritz/piksel/blob/master/CMakeLists.txt). If you get a native build to run on Windows, <a href="javascript:void(0);" onclick="document.querySelector('.gitter-open-chat-button').click();">please let us know</a>!
+At the moment web builds on Windows are only supported using the **Windows Subsystem for Linux** (WSL).
 
 #### How to set up WSL
 
@@ -17,7 +17,5 @@ cd /mnt/c
 ```
 
 This allows you to write your code in Windows, using the code editors you are accustomed to and only use WSL to build.
-
-#### Build for the web on Windows
 
 With WSL set up, you can continue the [Build for the web](gettingstarted/buildproject.md#build-for-the-web-) guide.
