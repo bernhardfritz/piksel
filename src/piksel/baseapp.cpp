@@ -33,12 +33,6 @@
 
 namespace piksel {
 
-#ifdef __EMSCRIPTEN__
-const bool USE_EMSCRIPTEN = true;
-#else
-const bool USE_EMSCRIPTEN = false;
-#endif
-
 Font minecraft_regular;
 
 void errorCallback(int error, const char* description) {
@@ -70,14 +64,11 @@ void BaseApp::start() {
         exit(EXIT_FAILURE);
 #endif
     }
-GLFWmonitor* primaryMonitor;
-if (!USE_EMSCRIPTEN && fullscreen) {
-    primaryMonitor = glfwGetPrimaryMonitor();
-} else {
-    primaryMonitor = NULL;
-}
+
+    GLFWmonitor* primaryMonitor = nullptr;
 #ifndef __EMSCRIPTEN__
     if (fullscreen) {
+        primaryMonitor = glfwGetPrimaryMonitor();
         const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
         if (width == -1) {
             width = mode->width;
