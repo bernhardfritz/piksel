@@ -20,6 +20,7 @@
 #include <chrono>
 #endif
 #include <utility>
+
 // TODO: fps is currently hardcoded.
 // Unfortunately vsync is not available on all platforms,
 // therefore a fixed value seems to be the best solution for now.
@@ -58,15 +59,15 @@ void BaseApp::start() {
 
     if (!glfwInit()) {
         fputs("Failed to initialize GLFW", stderr);
-#ifdef __EMSCRIPTEN__
+        #ifdef __EMSCRIPTEN__
         emscripten_force_exit(EXIT_FAILURE);
-#else
+        #else
         exit(EXIT_FAILURE);
-#endif
+        #endif
     }
 
     GLFWmonitor* primaryMonitor = nullptr;
-#ifndef __EMSCRIPTEN__
+    #ifndef __EMSCRIPTEN__
     if (fullscreen) {
         primaryMonitor = glfwGetPrimaryMonitor();
         const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
@@ -77,43 +78,52 @@ void BaseApp::start() {
             height = mode->height;
         }
     }
-#endif
+    #endif
 
     // glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_SAMPLES, 0); // disable msaa
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-#ifdef __EMSCRIPTEN__
+
+    #ifdef __EMSCRIPTEN__
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     devicePixelRatio = emscripten_get_device_pixel_ratio();
-#else
+    #else
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#endif
+    #ifdef __APPLE__
+    glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER,GL_FALSE);
+    #endif /* __APPLE__ */
+    #endif /* __EMSCRIPTEN__ */
+
+    #ifdef __EMSCRIPTEN__
     window = glfwCreateWindow(width * devicePixelRatio, height * devicePixelRatio, title.c_str(), primaryMonitor, NULL);
+    #else
+    window = glfwCreateWindow(width, height, title.c_str(), primaryMonitor, NULL);
+    #endif
 
     if (!window) {
         fputs("Failed to create GLFW window", stderr);
         glfwTerminate();
-#ifdef __EMSCRIPTEN__
+        #ifdef __EMSCRIPTEN__
         emscripten_force_exit(EXIT_FAILURE);
-#else
+        #else
         exit(EXIT_FAILURE);
-#endif
+        #endif
     }
 
-#ifdef __EMSCRIPTEN__
+    #ifdef __EMSCRIPTEN__
     EM_ASM(
         var canvas = document.getElementById('canvas');
         canvas.style.width = (canvas.width / window.devicePixelRatio) + 'px';
         canvas.style.height = (canvas.height / window.devicePixelRatio) + 'px';
     );
-#endif
+    #endif
 
     glfwMakeContextCurrent(window);
-#ifndef __EMSCRIPTEN__
+    #ifndef __EMSCRIPTEN__
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-#endif
+    #endif
     // TODO: vsync would be preferable, however it is not available on all platforms
     // glfwSwapInterval(0); // disable vsync
     glfwSwapInterval(1); // TODO: use vsync if available, otherwise use hardcoded fps.
@@ -146,13 +156,13 @@ void BaseApp::start() {
         ((BaseApp*) glfwGetWindowUserPointer(window))->scrollCallback(xoffset, yoffset);
     };
     glfwSetScrollCallback(window, _scrollCallback);
-#ifdef __EMSCRIPTEN__
+    #ifdef __EMSCRIPTEN__
     auto _fullscreenchangeCallback = [](int eventType, const EmscriptenFullscreenChangeEvent *fullscreenChangeEvent, void *userData) {
         ((BaseApp*) userData)->fullscreenchangeCallback(fullscreenChangeEvent->isFullscreen);
         return 1;
     };
     emscripten_set_fullscreenchange_callback("#document", this, true, _fullscreenchangeCallback);
-#endif
+    #endif
 
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -234,7 +244,7 @@ void BaseApp::start() {
 
     glBindVertexArray(0);
 
-	glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &vbo);
 
     shader.create(VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
     shader.createUniform("u_projectionMatrix");
@@ -299,11 +309,11 @@ void BaseApp::start() {
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         fputs("Failed to create framebuffer", stderr);
         glfwTerminate();
-#ifdef __EMSCRIPTEN__
+        #ifdef __EMSCRIPTEN__
         emscripten_force_exit(EXIT_FAILURE);
-#else
+        #else
         exit(EXIT_FAILURE);
-#endif
+        #endif
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -330,7 +340,7 @@ void BaseApp::start() {
 
     Graphics g(width, height, framebufferWidth, framebufferHeight, stateStack, shaderRelevantStateVector, shapes);
 
-#ifdef __EMSCRIPTEN__
+    #ifdef __EMSCRIPTEN__
     auto _mainLoop = [](void* arg) {
         std::pair<BaseApp*, Graphics>* p = (std::pair<BaseApp*, Graphics>*) arg;
         p->first->mainLoop(p->second);
@@ -343,14 +353,14 @@ void BaseApp::start() {
     // TODO: check if vsync is available otherwise hardcode fps
     // emscripten_set_main_loop_arg(_mainLoop, (void*) &p, FRAMES_PER_SECOND, 1); // simulate infinite loop prevents stack to be unwound
     emscripten_set_main_loop_arg(_mainLoop, (void*) &p, 0, 1); // simulate infinite loop prevents stack to be unwound
-#else
+    #else
     double start;
     while (!glfwWindowShouldClose(window)) {
         start = glfwGetTime();
         mainLoop(g);
         std::this_thread::sleep_for(std::chrono::duration<double>(start + SECONDS_PER_FRAME - glfwGetTime())); // TODO: would not be necessary with vsync
     } 
-#endif
+    #endif
 }
 
 // PRIVATE
@@ -366,9 +376,9 @@ void BaseApp::mainLoop(Graphics& g) {
     //     lastTime = currentTime;
     // }
 
-#if FXAA
+    #if FXAA
     glBindFramebuffer(GL_FRAMEBUFFER, postfx_framebuffer);
-#endif
+    #endif
     // TODO: check if needed
     // glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     // glClear(GL_COLOR_BUFFER_BIT);
@@ -379,7 +389,7 @@ void BaseApp::mainLoop(Graphics& g) {
 
     for (int i = 0; i < 8; i++) {
         glActiveTexture(GL_TEXTURE0 + i);
-	    glBindTexture(GL_TEXTURE_2D, i);
+        glBindTexture(GL_TEXTURE_2D, i);
     }
 
     draw(g);
@@ -396,7 +406,7 @@ void BaseApp::mainLoop(Graphics& g) {
     glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, shaderRelevantStateVector.size());
     glBindVertexArray(0);
 
-#if FXAA
+    #if FXAA
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     // TODO: check if needed
     // glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -407,16 +417,16 @@ void BaseApp::mainLoop(Graphics& g) {
 
     for (int i = 0; i < 8; i++) {
         glActiveTexture(GL_TEXTURE0 + i);
-	    glBindTexture(GL_TEXTURE_2D, i);
+        glBindTexture(GL_TEXTURE_2D, i);
     }
 
     glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, postfx_texture);
+    glBindTexture(GL_TEXTURE_2D, postfx_texture);
 
     glBindVertexArray(postfx_vao);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
-#endif
+    #endif
 
     glfwSwapBuffers(window);
 
@@ -440,17 +450,17 @@ void BaseApp::updateFramebufferSize(int framebufferWidth, int framebufferHeight)
     glViewport(0, 0, framebufferWidth, framebufferHeight);
     float framebufferRatio = framebufferWidth / (float) framebufferHeight;
     float ratio = width / (float) height;
-    if (framebufferRatio >= ratio) {
+    if (framebufferRatio >= ratio) { // framebuffer got wider
         projectionMatrix = glm::ortho(0.0f, (framebufferRatio / ratio) * width, (float) height, 0.0f);
-    } else {
+    } else { // framebuffer got narrower
         projectionMatrix = glm::ortho(0.0f, (float) width, (ratio / framebufferRatio) * height, 0.0f);
     }
-#if FXAA
+    #if FXAA
     if (postfx_texture) {
         glBindTexture(GL_TEXTURE_2D, postfx_texture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, framebufferWidth, framebufferHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     }
-#endif
+    #endif
 }
 
 void BaseApp::framebufferSizeCallback(int framebufferWidth, int framebufferHeight) {
@@ -466,7 +476,12 @@ void BaseApp::keyCallback(int key, int scancode, int action, int mods) {
 }
 
 void BaseApp::cursorPosCallback(double xpos, double ypos) {
+    #ifdef __EMSCRIPTEN__
     mouseMoved(xpos / devicePixelRatio, ypos / devicePixelRatio);
+    #else
+    mouseMoved(xpos, ypos);
+    std::cout << " " << xpos << " " << ypos << std::endl;
+    #endif
 }
 
 void BaseApp::mouseButtonCallback(int button, int action, int mods) {
@@ -485,7 +500,7 @@ void BaseApp::scrollCallback(double xoffset, double yoffset) {
 
 
 void BaseApp::fullscreenchangeCallback(bool isFullscreen) {
-#ifdef __EMSCRIPTEN__
+    #ifdef __EMSCRIPTEN__
     if (!isFullscreen) {
         EM_ASM(
             setTimeout(function() {
@@ -495,7 +510,7 @@ void BaseApp::fullscreenchangeCallback(bool isFullscreen) {
             }, 0); // dirty hack :)
         );
     }
-#endif
+    #endif
 }
 
 } // namespace nv
