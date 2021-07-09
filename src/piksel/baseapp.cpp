@@ -83,7 +83,6 @@ void BaseApp::start() {
     // glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_SAMPLES, 0); // disable msaa
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-
     #ifdef __EMSCRIPTEN__
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     devicePixelRatio = emscripten_get_device_pixel_ratio();
@@ -91,9 +90,6 @@ void BaseApp::start() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    #ifdef __APPLE__
-    glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER,GL_FALSE);
-    #endif /* __APPLE__ */
     #endif /* __EMSCRIPTEN__ */
 
     #ifdef __EMSCRIPTEN__
@@ -136,10 +132,6 @@ void BaseApp::start() {
     glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
     updateFramebufferSize(framebufferWidth, framebufferHeight);
 
-    auto _framebufferSizeCallback = [](GLFWwindow* window, int framebufferWidth, int framebufferHeight) {
-        ((BaseApp*) glfwGetWindowUserPointer(window))->framebufferSizeCallback(framebufferWidth, framebufferHeight);
-    };
-    glfwSetFramebufferSizeCallback(window, _framebufferSizeCallback);
     auto _keyCallback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
         ((BaseApp*) glfwGetWindowUserPointer(window))->keyCallback(key, scancode, action, mods);
     };
@@ -162,6 +154,11 @@ void BaseApp::start() {
         return 1;
     };
     emscripten_set_fullscreenchange_callback("#document", this, true, _fullscreenchangeCallback);
+    #else
+    auto _framebufferSizeCallback = [](GLFWwindow* window, int framebufferWidth, int framebufferHeight) {
+        ((BaseApp*) glfwGetWindowUserPointer(window))->framebufferSizeCallback(framebufferWidth, framebufferHeight);
+    };
+    glfwSetFramebufferSizeCallback(window, _framebufferSizeCallback);
     #endif
 
     glGenVertexArrays(1, &vao);
@@ -445,16 +442,45 @@ void BaseApp::mainLoop(Graphics& g) {
 }
 
 void BaseApp::updateFramebufferSize(int framebufferWidth, int framebufferHeight) {
+    #if defined(__APPLE__) && !defined(__EMSCRIPTEN__)
+    // This is a bit of a hack, but GLFW does not seem to provide a way of querying the monior of the current context,
+    // so this is the only way I could come up with of dealing with a mix between a native retina display and an external non-retina one.
+    static int oldFramebufferWidth = width;
+    static int oldFramebufferHeight = height;
+    static bool retinaDisplay = false;
+    if (framebufferWidth == 2*oldFramebufferWidth and framebufferHeight == 2*oldFramebufferHeight) {
+        // Framebuffer doubled in size. Lets assume that this is because the window got dragged between a non-retina external monitor and the native mac display.
+        retinaDisplay = true;
+    } else if (oldFramebufferWidth == 2*framebufferWidth and oldFramebufferHeight == 2*framebufferHeight) {
+        // Framebuffer halved in size. Lets assume the window got dragged back.
+        retinaDisplay = false;
+    }
+    #endif /* __APPLE__ */
+
     this->framebufferWidth = framebufferWidth;
     this->framebufferHeight = framebufferHeight;
     glViewport(0, 0, framebufferWidth, framebufferHeight);
     float framebufferRatio = framebufferWidth / (float) framebufferHeight;
     float ratio = width / (float) height;
-    if (framebufferRatio >= ratio) { // framebuffer got wider
+    if (framebufferRatio >= ratio) { 
         projectionMatrix = glm::ortho(0.0f, (framebufferRatio / ratio) * width, (float) height, 0.0f);
-    } else { // framebuffer got narrower
+        #ifndef __EMSCRIPTEN__
+        devicePixelRatio = framebufferHeight / (float) height;
+        #endif
+    } else {
         projectionMatrix = glm::ortho(0.0f, (float) width, (ratio / framebufferRatio) * height, 0.0f);
+        #ifndef __EMSCRIPTEN__
+        devicePixelRatio = framebufferWidth / (float) width;
+        #endif
     }
+
+    #if defined(__APPLE__) && !defined(__EMSCRIPTEN__)
+    // Part II of the retina-display hack.
+    devicePixelRatio *= retinaDisplay ? 0.5 : 1.0;
+    oldFramebufferWidth = framebufferWidth;
+    oldFramebufferHeight = framebufferHeight;
+    #endif /* __APPLE__ */
+
     #if FXAA
     if (postfx_texture) {
         glBindTexture(GL_TEXTURE_2D, postfx_texture);
@@ -476,12 +502,7 @@ void BaseApp::keyCallback(int key, int scancode, int action, int mods) {
 }
 
 void BaseApp::cursorPosCallback(double xpos, double ypos) {
-    #ifdef __EMSCRIPTEN__
     mouseMoved(xpos / devicePixelRatio, ypos / devicePixelRatio);
-    #else
-    mouseMoved(xpos, ypos);
-    std::cout << " " << xpos << " " << ypos << std::endl;
-    #endif
 }
 
 void BaseApp::mouseButtonCallback(int button, int action, int mods) {
