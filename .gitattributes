@@ -1,2 +1,2 @@
-lib/* linguist-vendored
+lib/**/* linguist-vendored
 shell.html linguist-generated
