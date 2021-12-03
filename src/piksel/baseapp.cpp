@@ -441,21 +441,6 @@ void BaseApp::mainLoop(Graphics& g) {
 }
 
 void BaseApp::updateFramebufferSize(int framebufferWidth, int framebufferHeight) {
-#if defined(__APPLE__) && !defined(__EMSCRIPTEN__)
-    // This is a bit of a hack, but GLFW does not seem to provide a way of querying the monior of the current context,
-    // so this is the only way I could come up with of dealing with a mix between a native retina display and an external non-retina one.
-    static int oldFramebufferWidth = width;
-    static int oldFramebufferHeight = height;
-    static bool retinaDisplay = false;
-    if (framebufferWidth == 2*oldFramebufferWidth and framebufferHeight == 2*oldFramebufferHeight) {
-        // Framebuffer doubled in size. Lets assume that this is because the window got dragged between a non-retina external monitor and the native mac display.
-        retinaDisplay = true;
-    } else if (oldFramebufferWidth == 2*framebufferWidth and oldFramebufferHeight == 2*framebufferHeight) {
-        // Framebuffer halved in size. Lets assume the window got dragged back.
-        retinaDisplay = false;
-    }
-#endif /* __APPLE__ */
-
     this->framebufferWidth = framebufferWidth;
     this->framebufferHeight = framebufferHeight;
     glViewport(0, 0, framebufferWidth, framebufferHeight);
@@ -463,23 +448,9 @@ void BaseApp::updateFramebufferSize(int framebufferWidth, int framebufferHeight)
     float ratio = width / (float) height;
     if (framebufferRatio >= ratio) { 
         projectionMatrix = glm::ortho(0.0f, (framebufferRatio / ratio) * width, (float) height, 0.0f);
-#ifndef __EMSCRIPTEN__
-        devicePixelRatio = framebufferHeight / (float) height;
-#endif /* __EMSCRIPTEN__ */
     } else {
         projectionMatrix = glm::ortho(0.0f, (float) width, (ratio / framebufferRatio) * height, 0.0f);
-#ifndef __EMSCRIPTEN__
-        devicePixelRatio = framebufferWidth / (float) width;
-#endif /* __EMSCRIPTEN__ */
     }
-
-#if defined(__APPLE__) && !defined(__EMSCRIPTEN__)
-    // Part II of the retina-display hack.
-    devicePixelRatio *= retinaDisplay ? 0.5 : 1.0;
-    oldFramebufferWidth = framebufferWidth;
-    oldFramebufferHeight = framebufferHeight;
-#endif /* __APPLE__ */
-
 #if FXAA
     if (postfx_texture) {
         glBindTexture(GL_TEXTURE_2D, postfx_texture);
