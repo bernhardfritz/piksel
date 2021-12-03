@@ -154,12 +154,11 @@ void BaseApp::start() {
         return 1;
     };
     emscripten_set_fullscreenchange_callback("#document", this, true, _fullscreenchangeCallback);
-#else
+#endif /* __EMSCRIPTEN__*/
     auto _framebufferSizeCallback = [](GLFWwindow* window, int framebufferWidth, int framebufferHeight) {
         ((BaseApp*) glfwGetWindowUserPointer(window))->framebufferSizeCallback(framebufferWidth, framebufferHeight);
     };
     glfwSetFramebufferSizeCallback(window, _framebufferSizeCallback);
-#endif /* __EMSCRIPTEN__*/
 
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
