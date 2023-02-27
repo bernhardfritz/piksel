@@ -74,14 +74,76 @@
       font-weight: 300;
       font-size: 1em;
     }
+    .banner {
+      background-color: #42b883;
+      color: white;
+      line-height: 40px;
+      height: 40px;
+      text-shadow: black 0 0 10px;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 15px;
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: center;
+    }
+    .banner-element-left {
+      padding-left: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .banner-element-right {
+      width: 210px;
+      min-width: 210px;
+    }
+    .speech-bubble {
+      position: relative;
+      background: white;
+      border-radius: .4em;
+    }
+    .speech-bubble:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 60%;
+      width: 0;
+      height: 0;
+      border: 8px solid transparent;
+      border-right-color: white;
+      border-left: 0;
+      border-bottom: 0;
+      margin-top: -4px;
+      margin-left: -8px;
+    }
+    .speech-bubble {
+      text-shadow: initial;
+      color: black;
+      font-weight: 600;
+      padding: 5px;
+    }
+    .p8g {
+      vertical-align: middle;
+      height: 60%;
+    }
   </style>
 </head>
 <body>
+  <div class="banner">
+    <div class="banner-element-left">
+      Did you know piksel has been rewritten from scratch? Its successor is called <b>p8g</b> and besides performance optimizations it now also supports languages other than C++.&nbsp;
+    </div>
+    <div class="banner-element-right">
+      <img class="p8g" src="_media/p8g.ico">&nbsp;&nbsp;&nbsp;<span class="speech-bubble">Click <a href="https://bernhardfritz.github.io/p8g/">here</a> to check it out!</span>
+    </div>
+  </div>
   <div id="app"></div>
   <script>
     window.$docsify = {
       name: 'piksel',
-      repo: 'https://github.com/bernhardfritz/piksel',
       loadSidebar: true,
       subMaxLevel: 2,
       coverpage: true,
