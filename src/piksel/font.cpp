@@ -14,7 +14,7 @@ int Font::_load(const unsigned char* fontBuffer) {
         return 0;
     }
     stbtt_GetFontVMetrics(info, &ascent, &descent, &lineGap);
-    stbtt_GetFontBoundingBox(info, &x0, &y1, &x1, &y1);
+    stbtt_GetFontBoundingBox(info, &x0, &y0, &x1, &y1);
 
     for (char ch = ' '; ch <= '~'; ch++) {
         stbtt_vertex* vertices;
