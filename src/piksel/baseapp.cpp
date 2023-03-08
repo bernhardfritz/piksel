@@ -18,8 +18,9 @@
 #include <GLFW/glfw3.h>
 #include <thread>
 #include <chrono>
-#endif
+#endif /* __EMSCRIPTEN__*/
 #include <utility>
+
 // TODO: fps is currently hardcoded.
 // Unfortunately vsync is not available on all platforms,
 // therefore a fixed value seems to be the best solution for now.
@@ -32,12 +33,6 @@
 #define FXAA 0
 
 namespace piksel {
-
-#ifdef __EMSCRIPTEN__
-const bool USE_EMSCRIPTEN = true;
-#else
-const bool USE_EMSCRIPTEN = false;
-#endif
 
 Font minecraft_regular;
 
@@ -68,16 +63,13 @@ void BaseApp::start() {
         emscripten_force_exit(EXIT_FAILURE);
 #else
         exit(EXIT_FAILURE);
-#endif
+#endif /* __EMSCRIPTEN__*/
     }
-GLFWmonitor* primaryMonitor;
-if (!USE_EMSCRIPTEN && fullscreen) {
-    primaryMonitor = glfwGetPrimaryMonitor();
-} else {
-    primaryMonitor = NULL;
-}
+
+    GLFWmonitor* primaryMonitor = nullptr;
 #ifndef __EMSCRIPTEN__
     if (fullscreen) {
+        primaryMonitor = glfwGetPrimaryMonitor();
         const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
         if (width == -1) {
             width = mode->width;
@@ -86,7 +78,7 @@ if (!USE_EMSCRIPTEN && fullscreen) {
             height = mode->height;
         }
     }
-#endif
+#endif /* __EMSCRIPTEN__*/
 
     // glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_SAMPLES, 0); // disable msaa
@@ -98,8 +90,13 @@ if (!USE_EMSCRIPTEN && fullscreen) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#endif
+#endif /* __EMSCRIPTEN__ */
+
+#ifdef __EMSCRIPTEN__
     window = glfwCreateWindow(width * devicePixelRatio, height * devicePixelRatio, title.c_str(), primaryMonitor, NULL);
+#else
+    window = glfwCreateWindow(width, height, title.c_str(), primaryMonitor, NULL);
+#endif /* __EMSCRIPTEN__*/
 
     if (!window) {
         fputs("Failed to create GLFW window", stderr);
@@ -108,7 +105,7 @@ if (!USE_EMSCRIPTEN && fullscreen) {
         emscripten_force_exit(EXIT_FAILURE);
 #else
         exit(EXIT_FAILURE);
-#endif
+#endif /* __EMSCRIPTEN__*/
     }
 
 #ifdef __EMSCRIPTEN__
@@ -117,12 +114,12 @@ if (!USE_EMSCRIPTEN && fullscreen) {
         canvas.style.width = (canvas.width / window.devicePixelRatio) + 'px';
         canvas.style.height = (canvas.height / window.devicePixelRatio) + 'px';
     );
-#endif
+#endif /* __EMSCRIPTEN__*/
 
     glfwMakeContextCurrent(window);
 #ifndef __EMSCRIPTEN__
     gladLoadGLLoader((GLADloadproc) glfwGetProcAddress);
-#endif
+#endif /* __EMSCRIPTEN__*/
     // TODO: vsync would be preferable, however it is not available on all platforms
     // glfwSwapInterval(0); // disable vsync
     glfwSwapInterval(1); // TODO: use vsync if available, otherwise use hardcoded fps.
@@ -135,10 +132,6 @@ if (!USE_EMSCRIPTEN && fullscreen) {
     glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
     updateFramebufferSize(framebufferWidth, framebufferHeight);
 
-    auto _framebufferSizeCallback = [](GLFWwindow* window, int framebufferWidth, int framebufferHeight) {
-        ((BaseApp*) glfwGetWindowUserPointer(window))->framebufferSizeCallback(framebufferWidth, framebufferHeight);
-    };
-    glfwSetFramebufferSizeCallback(window, _framebufferSizeCallback);
     auto _keyCallback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
         ((BaseApp*) glfwGetWindowUserPointer(window))->keyCallback(key, scancode, action, mods);
     };
@@ -161,7 +154,11 @@ if (!USE_EMSCRIPTEN && fullscreen) {
         return 1;
     };
     emscripten_set_fullscreenchange_callback("#document", this, true, _fullscreenchangeCallback);
-#endif
+#endif /* __EMSCRIPTEN__*/
+    auto _framebufferSizeCallback = [](GLFWwindow* window, int framebufferWidth, int framebufferHeight) {
+        ((BaseApp*) glfwGetWindowUserPointer(window))->framebufferSizeCallback(framebufferWidth, framebufferHeight);
+    };
+    glfwSetFramebufferSizeCallback(window, _framebufferSizeCallback);
 
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -243,7 +240,7 @@ if (!USE_EMSCRIPTEN && fullscreen) {
 
     glBindVertexArray(0);
 
-	glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &vbo);
 
     shader.create(VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE);
     shader.createUniform("u_projectionMatrix");
@@ -312,7 +309,7 @@ if (!USE_EMSCRIPTEN && fullscreen) {
         emscripten_force_exit(EXIT_FAILURE);
 #else
         exit(EXIT_FAILURE);
-#endif
+#endif /* __EMSCRIPTEN__*/
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -359,7 +356,7 @@ if (!USE_EMSCRIPTEN && fullscreen) {
         mainLoop(g);
         std::this_thread::sleep_for(std::chrono::duration<double>(start + SECONDS_PER_FRAME - glfwGetTime())); // TODO: would not be necessary with vsync
     } 
-#endif
+#endif /* __EMSCRIPTEN__*/
 }
 
 // PRIVATE
@@ -377,7 +374,7 @@ void BaseApp::mainLoop(Graphics& g) {
 
 #if FXAA
     glBindFramebuffer(GL_FRAMEBUFFER, postfx_framebuffer);
-#endif
+#endif /* FXAA */
     // TODO: check if needed
     // glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     // glClear(GL_COLOR_BUFFER_BIT);
@@ -388,7 +385,7 @@ void BaseApp::mainLoop(Graphics& g) {
 
     for (int i = 0; i < 8; i++) {
         glActiveTexture(GL_TEXTURE0 + i);
-	    glBindTexture(GL_TEXTURE_2D, i);
+        glBindTexture(GL_TEXTURE_2D, i);
     }
 
     draw(g);
@@ -416,16 +413,16 @@ void BaseApp::mainLoop(Graphics& g) {
 
     for (int i = 0; i < 8; i++) {
         glActiveTexture(GL_TEXTURE0 + i);
-	    glBindTexture(GL_TEXTURE_2D, i);
+        glBindTexture(GL_TEXTURE_2D, i);
     }
 
     glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, postfx_texture);
+    glBindTexture(GL_TEXTURE_2D, postfx_texture);
 
     glBindVertexArray(postfx_vao);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     glBindVertexArray(0);
-#endif
+#endif /* FXAA */
 
     glfwSwapBuffers(window);
 
@@ -449,7 +446,7 @@ void BaseApp::updateFramebufferSize(int framebufferWidth, int framebufferHeight)
     glViewport(0, 0, framebufferWidth, framebufferHeight);
     float framebufferRatio = framebufferWidth / (float) framebufferHeight;
     float ratio = width / (float) height;
-    if (framebufferRatio >= ratio) {
+    if (framebufferRatio >= ratio) { 
         projectionMatrix = glm::ortho(0.0f, (framebufferRatio / ratio) * width, (float) height, 0.0f);
     } else {
         projectionMatrix = glm::ortho(0.0f, (float) width, (ratio / framebufferRatio) * height, 0.0f);
@@ -459,7 +456,7 @@ void BaseApp::updateFramebufferSize(int framebufferWidth, int framebufferHeight)
         glBindTexture(GL_TEXTURE_2D, postfx_texture);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, framebufferWidth, framebufferHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     }
-#endif
+#endif /* FXAA */
 }
 
 void BaseApp::framebufferSizeCallback(int framebufferWidth, int framebufferHeight) {
@@ -504,7 +501,7 @@ void BaseApp::fullscreenchangeCallback(bool isFullscreen) {
             }, 0); // dirty hack :)
         );
     }
-#endif
+#endif /* __EMSCRIPTEN__ */
 }
 
 } // namespace nv
